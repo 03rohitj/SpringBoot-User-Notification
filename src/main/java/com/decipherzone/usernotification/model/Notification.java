@@ -1,6 +1,7 @@
 package com.decipherzone.usernotification.model;
 
 import com.decipherzone.usernotification.Overload;
+import com.decipherzone.usernotification.repository.UserRepository;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -17,7 +18,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** Notification model to store a notification sent to a user */
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = "users")
 @Entity
 public @Data class Notification extends EntityId {
@@ -48,9 +48,10 @@ public @Data class Notification extends EntityId {
      * Store all the users to which notification has been sent.
      * Many-to-Many relation
      */
-    @ManyToMany(mappedBy = "notifications", fetch = FetchType.EAGER)     //Data member of User model
+    @ManyToOne(fetch = FetchType.EAGER) //(mappedBy = "notifications", fetch = FetchType.EAGER)     //Data member of User model
+    @JoinColumn
     @JsonIgnore
-    @EqualsAndHashCode.Exclude private Set<User> users = new HashSet<>();
+    @EqualsAndHashCode.Exclude private User user;
 
     /** Time at which notification is to be sent */
     @Column(nullable = false)
@@ -80,8 +81,15 @@ public @Data class Notification extends EntityId {
     @Column(nullable = false)
     private Boolean isRepeat;
 
+    //Default Constructor
+    public Notification(){
+        isSent = false;
+        dateCreated = convertDateToLocalDate(new Date());
+        lastUpdated = convertDateToLocalDate(new Date());
+    }
+
+    //C'tor with arguments
     public Notification(Type type, Date notifyTime, Boolean enabled, Boolean isRepeat) {
-        System.out.println("\nArg C'tor called");
         this.type = type;
         this.notifyTime = convertDateToLocalDate(notifyTime);
         this.enabled = enabled;
@@ -106,20 +114,14 @@ public @Data class Notification extends EntityId {
         this.lastUpdated = convertDateToLocalDate(date);
     }
 
-    public User addUser(User user){
-        this.users.add(user);
+    public void setUser(User user){
+        this.user = user;
+        //Add this notification to the 'user'
         user.getNotifications().add(this);
-        return user;
     }
 
-    public void deleteUser(User user){
-        users.remove(user);
-        user.getNotifications().remove(this);
+    public void removeUser(){
+        this.user = null;
     }
 
-    public void deleteUser(){
-        ArrayList<User> userArray = new ArrayList<>(users);
-        for(User user : userArray)
-            deleteUser(user);
-    }
 }

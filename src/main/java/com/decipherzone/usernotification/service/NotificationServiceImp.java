@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -35,9 +36,10 @@ public class NotificationServiceImp implements NotificationService{
     //API to create a new notification
     @Override
     public Notification createNotification(Notification notification) {
-        notification.setIsSent(false);
-        notification.setDateCreated(new Date());
-        notification.setLastUpdated(new Date());
+
+//        notification.setIsSent(false);
+//        notification.setDateCreated(new Date());
+//        notification.setLastUpdated(new Date());
         return notificationRepository.save(notification);
     }
 
@@ -57,38 +59,33 @@ public class NotificationServiceImp implements NotificationService{
     @Override
     public void deleteNotification(Long id) {
         Notification notification = notificationRepository.findById(id).orElseThrow();
-        //First delete all the users registered to the notification
-        notification.deleteUser();
 
+        //First delete notification registered with user
+        User user = notification.getUser();
+        user.getNotifications().remove(notification);
+
+        //Then delete the notification
         notificationRepository.deleteById(id);
     }
 
     //API to register a new user to the notification
     @Override
-    public Notification addUserToNotification(Long notificationId, Long userId) {
+    public Notification registerUserToNotification(Long notificationId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         Notification notification = notificationRepository.findById(notificationId).orElseThrow();
-        notification.addUser(user);
+        notification.setUser(user);
         userRepository.save(user);
         return notificationRepository.save(notification);
     }
 
     //API to delete all the users registered to the notification
     @Override
-    public void deleteUserFromNotification(Long notificationId, Long userId) {
+    public void unregisterUserFromNotification(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
-        notification.deleteUser(user);
+        //User user = notification.getUser();
+        notification.removeUser();
         notificationRepository.save(notification);
-        userRepository.save(user);
-    }
-
-    //API to get all the users registered to the notification
-    @Override
-    public Set<User> getAllUserFromNotification(Long notificationId) {
-        Notification notification = notificationRepository.findById(notificationId).orElseThrow();
-        System.out.println("=====>\n\n"+notification.getUsers());
-        return notification.getUsers();
+        //userRepository.save(user);
     }
 
     //API to change enable/disable notification

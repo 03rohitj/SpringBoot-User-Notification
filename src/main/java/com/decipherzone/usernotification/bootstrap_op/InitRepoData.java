@@ -49,11 +49,7 @@ public class InitRepoData implements ApplicationListener<ContextRefreshedEvent> 
         System.out.println("\nNotifications");
         for(Notification notification : notificationRepository.findAll()){
             System.out.println(notification);
-            System.out.println("Users {");
-            for(User user : notification.getUsers()){
-                System.out.println(user);
-            }
-            System.out.println(" }");
+            System.out.println("User {"+notification.getUser()+" }");
         }
     }
 
@@ -63,29 +59,29 @@ public class InitRepoData implements ApplicationListener<ContextRefreshedEvent> 
                 "marcus108@gmail.com",
                 "8742679191");
 
+        userRepository.save(user);
+
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Notification notification = new Notification(
+        Notification notification1 = new Notification(
                 Notification.Type.SMS,
                 formatter.parse("03/10/2021"),
                 true,
                 false
         );
 
-        notification.addUser(user);
-        user.addNotification(notification);
-
-        notificationRepository.save(notification);
-
         Notification notification2 = new Notification(
                 Notification.Type.SMS,
-                formatter.parse("23/10/2021"),
+                formatter.parse("23/12/2021"),
                 false,
-                false
+                true
         );
 
-        notification2.addUser(user);
+        notification1.setUser(user);
+        notification2.setUser(user);
+
+
+        notificationRepository.save(notification1);
         notificationRepository.save(notification2);
-        userRepository.save(user);
     }
 
 }

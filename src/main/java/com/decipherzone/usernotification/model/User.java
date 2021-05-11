@@ -25,9 +25,7 @@ public @Data class User extends EntityId{
     private String phone;
 
     /** To store list of notifications sent to the user */
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_notification", joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "notification_id"))
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Notification> notifications = new HashSet<>();
 
@@ -37,23 +35,4 @@ public @Data class User extends EntityId{
         this.phone = phone;
     }
 
-    //Add a notification to the set
-    public Notification addNotification(Notification notification){
-        this.notifications.add(notification);
-        notification.addUser(this);
-        return notification;
-    }
-
-    //Remove a notification fom the set
-    public void removeNotification(Notification notification){
-        this.notifications.remove(notification);
-        notification.getUsers().remove(this);
-    }
-
-    //Remove all the notifications
-    public void removeNotification(){
-        for(Notification notification : notifications){
-            this.removeNotification(notification);
-        }
-    }
 }

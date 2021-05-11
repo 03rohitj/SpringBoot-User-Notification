@@ -1,16 +1,12 @@
 package com.decipherzone.usernotification.controller;
 
 import com.decipherzone.usernotification.model.Notification;
-import com.decipherzone.usernotification.model.User;
 import com.decipherzone.usernotification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -41,29 +37,23 @@ public class NotificationController {
 
     }
 
-    //Method is responsible for adding a user to the set of users, of the notification having ID as 'notificationId'
-    @PutMapping("/{notificationId}/addUser")
-    public Notification addUserToNotification(@PathVariable Long notificationId, @RequestBody Long userId){
-        return notificationService.addUserToNotification(notificationId, userId);
+    //Method is responsible for registering a user to the notification having ID as 'notificationId'
+    @PutMapping("/{notificationId}/registerUser")
+    public Notification registerUserToNotification(@PathVariable Long notificationId, @RequestBody Long userId){
+        return notificationService.registerUserToNotification(notificationId, userId);
     }
 
-    //Method is responsible for deleting a user from the set of users, of the notification having ID as 'notificationId'
-    @DeleteMapping("/{notificationId}/deleteUser")
-    public void deleteUserFromNotification(@PathVariable Long notificationId, @RequestBody Long userId){
-        notificationService.deleteUserFromNotification(notificationId, userId);
+    //Method is responsible for unregistering a user from the notification having ID as 'notificationId'
+    @DeleteMapping("/{notificationId}/unregisterUser")
+    public void unregisterUserFromNotification(@PathVariable Long notificationId){
+        notificationService.unregisterUserFromNotification(notificationId);
     }
 
     //Method is responsible for displaying all the users , of the notification having ID as 'notificationId'
-    @GetMapping("/{notificationId}/getAllUser")
-    public Set<User> getAllUserFromNotification(@PathVariable Long notificationId){
-        return notificationService.getAllUserFromNotification(notificationId);
-    }
-
     //Controller to implement a service that enable or disable a notification
     @PutMapping("/{notificationId}/enableNotification")
     public void enableNotification(@PathVariable Long notificationId, @RequestBody Boolean state){
         notificationService.enableNotification(notificationId,state);
-
     }
 
     @GetMapping("{notificationId}/sendNotification")

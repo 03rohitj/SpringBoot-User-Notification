@@ -1,10 +1,12 @@
 package com.decipherzone.usernotification.service;
 
+import com.decipherzone.usernotification.model.Notification;
 import com.decipherzone.usernotification.model.User;
 import com.decipherzone.usernotification.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +46,16 @@ public class UserServiceImp implements UserService{
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public ArrayList<Long> getAllNotifications(Long id) {
+        User user = userRepository.findById(id).orElseThrow();
+        ArrayList<Long> notificationIdList = new ArrayList<>();
+
+        for(Notification notification : user.getNotifications()){
+            notificationIdList.add(notification.getId());
+        }
+        return notificationIdList;
     }
 }

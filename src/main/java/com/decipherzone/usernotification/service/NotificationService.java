@@ -19,12 +19,6 @@ public interface NotificationService {
 
     void deleteNotification(Long id);
 
-    Notification addUserToNotification(Long notificationId, Long userId);
-
-    void deleteUserFromNotification(Long notificationId, Long userId);
-
-    Set<User> getAllUserFromNotification(Long notificationId);
-
     void enableNotification(Long notificationId, Boolean state);
 
     Notification sendNotification(Long notificationId);
@@ -34,4 +28,8 @@ public interface NotificationService {
     Set<Notification> getAllNotifications(Notification.Type notificationType);
 
     Set<Notification> getAllNotifications(LocalDate notificationDate);
+
+    Notification registerUserToNotification(Long notificationId, Long userId);
+
+    void unregisterUserFromNotification(Long notificationId);
 }
