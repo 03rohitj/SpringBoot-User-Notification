@@ -3,6 +3,7 @@ package com.decipherzone.usernotification.service;
 import com.decipherzone.usernotification.model.Notification;
 import com.decipherzone.usernotification.model.User;
 import com.decipherzone.usernotification.repository.UserRepository;
+import error_handler.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +14,13 @@ import java.util.Optional;
 @Service
 public class UserServiceImp implements UserService{
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-//
-//    public void setUserRepository(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
+    @Autowired
+    public UserServiceImp(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
 
     @Override
     public List<User> getAllUsers() {
@@ -29,7 +30,7 @@ public class UserServiceImp implements UserService{
     @Override
     public User getUser(Long id) {
         Optional<User> user = userRepository.findById(id);
-        return user.orElseThrow();
+        return user.orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class UserServiceImp implements UserService{
 
     @Override
     public ArrayList<Long> getAllNotifications(Long id) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         ArrayList<Long> notificationIdList = new ArrayList<>();
 
         for(Notification notification : user.getNotifications()){

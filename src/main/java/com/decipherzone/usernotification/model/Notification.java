@@ -22,22 +22,9 @@ import java.util.Set;
 @Entity
 public @Data class Notification extends EntityId {
 
+    //Type of message
     public enum Type{
         SMS, EMAIL
-//        SMS{
-//            @Override
-//            public String toString() {
-//                return "SMS";
-//            }
-//        },
-//
-//        EMAIL{
-//            @Override
-//            public String toString () {
-//                return "EMAIL";
-//            }
-//        }
-
     }
     /** Defines the type of message(SMS or EMAIL) */
     @Column(nullable = false)

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** User model to store a user's information */
+@RequiredArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -15,12 +16,15 @@ import java.util.Set;
 @Entity
 public @Data class User extends EntityId{
 
+    @NonNull
     @Column(nullable = false, length = 50)
     private String name;
 
+    @NonNull
     @Column(nullable = false, length = 50, unique = true)
     private String email;
 
+    @NonNull
     @Column(nullable = false, unique = true, scale = 10)
     private String phone;
 
@@ -28,11 +32,5 @@ public @Data class User extends EntityId{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Notification> notifications = new HashSet<>();
-
-    public User(String name, String email, String phone) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-    }
 
 }

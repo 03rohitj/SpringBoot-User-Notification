@@ -16,6 +16,10 @@ import java.util.List;
 public class UserController {
     UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @Autowired
     public void setUserService(UserService userService){
         this.userService = userService;
